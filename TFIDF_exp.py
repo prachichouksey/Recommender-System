@@ -6,7 +6,15 @@ Created on Fri Jul 12 20:03:03 2019
 """
 import csv
 import math
-file = open("Dataset.csv")
+import numpy as np
+import pandas as pd
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer 
+en_stops = set(stopwords.words('english'))
+ps = PorterStemmer()
+c_words=[]
+cc_words=[]
+file = open("test4.csv")
 reader = csv.reader(file)
 
 data = [
@@ -16,35 +24,53 @@ data = [
           .replace(")", ""))
     for word in row[1].lower().split()]
     for row in reader]
-    
-  #Removes header
-data = data[1:]
-print("========================DATA========================================")
-print(data)
-print("========================DATA END========================================")
+file.close()
+file = open("test4.csv")
+reader_patent = csv.reader(file)
+patent_num=[]
 
-def computeReviewTFDict(review):
+for row in reader_patent:
+    patent_num.append(row[0])
+patent_num=patent_num[1:]
+print(patent_num)
+
+data = data[1:]
+for words in data: 
+    c_words=[]
+    for word in words:
+        if word not in en_stops:
+            word = ps.stem(word)
+            c_words.append(word)
+    cc_words.append(c_words)
+
+  #Removes header
+
+#print("========================DATA========================================")
+#print(cc_words)
+#print("========================DATA END========================================")
+
+def computeReviewTFDict(abstract):
     """ Returns a tf dictionary for each review whose keys are all 
     the unique words in the review and whose values are their 
     corresponding tf.
     """
     #Counts the number of times the word appears in review
-    reviewTFDict = {}
-    for word in review:
-        if word in reviewTFDict:
-            reviewTFDict[word] += 1
+    abstractTFDict = {}
+    for word in abstract:
+        if word in abstractTFDict:
+            abstractTFDict[word] += 1
         else:
-            reviewTFDict[word] = 1
+            abstractTFDict[word] = 1
     #Computes tf for each word           
-    for word in reviewTFDict:
-        reviewTFDict[word] = reviewTFDict[word] / len(review)
-    return reviewTFDict
+    for word in abstractTFDict:
+        abstractTFDict[word] = abstractTFDict[word] / len(abstract)
+    return abstractTFDict
 TFDict=[]
-for d in data:
+for d in cc_words:
     TFDict.append(computeReviewTFDict(d))
-print("========================TF DICT========================================")
-print(TFDict)
-print("========================TF DICT END========================================")
+#print("========================TF DICT========================================")
+#print(TFDict)
+#print("========================TF DICT END========================================")
 
 def computeCountDict():
     """ Returns a dictionary whose keys are all the unique words in
@@ -76,9 +102,9 @@ def computeIDFDict():
   #Stores the idf dictionary
 idfDict = computeIDFDict()
 
-print("========================IDF DICT========================================")
-print(idfDict)
-print("========================IDF DICT END========================================")
+#print("========================IDF DICT========================================")
+#print(idfDict)
+#print("========================IDF DICT END========================================")
 
 def computeReviewTFIDFDict(reviewTFDict):
     """ Returns a dictionary whose keys are all the unique words in the
@@ -93,9 +119,9 @@ def computeReviewTFIDFDict(reviewTFDict):
   #Stores the TF-IDF dictionaries
 tfidfDict = [computeReviewTFIDFDict(review) for review in TFDict]
 
-print("========================TF-IDF DICT========================================")
-print(tfidfDict)
-print("========================TF-IDF DICT END=======================================")
+#print("========================TF-IDF DICT========================================")
+#print(tfidfDict)
+#print("========================TF-IDF DICT END=======================================")
  # Create a list of unique words
 wordDict = sorted(countDict.keys())
 def computeTFIDFVector(review):
@@ -108,9 +134,9 @@ def computeTFIDFVector(review):
     return tfidfVector
 
 tfidfVector = [computeTFIDFVector(review) for review in tfidfDict]
-print("========================TF-IDF Vector========================================")
-print(tfidfVector)
-print("========================TF-IDF Vector END=======================================")
+#print("========================TF-IDF Vector========================================")
+#print(tfidfVector)
+#print("========================TF-IDF Vector END=======================================")
 
 def dot_product(vector_x, vector_y):
     dot = 0.0
@@ -124,7 +150,15 @@ def magnitude(vector):
       mag += math.pow(index, 2)
     return math.sqrt(mag)
 
-
-review_similarity = dot_product(tfidfVector[2], tfidfVector[1])/ magnitude(tfidfVector[2]) * magnitude(tfidfVector[1])
-print("Similairity is",review_similarity)
+def similarityMatrixCalculator():
+    review_similarity = np.zeros(shape=(10,10))
+    for i in range(10):
+        for j in range(10):
+            review_similarity[i][j] = float(dot_product(tfidfVector[i], tfidfVector[j])/ magnitude(tfidfVector[i]) * magnitude(tfidfVector[j]))
+    #print("Similairity is",review_similarity)
+    return review_similarity
     
+end_matrix=similarityMatrixCalculator()
+print(end_matrix)
+df = pd.DataFrame(end_matrix, columns=patent_num[:10], index=patent_num[:10])
+df.to_csv('similarity_matrix.csv') 
