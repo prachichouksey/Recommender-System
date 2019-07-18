@@ -331,7 +331,7 @@ class Search:
 if __name__ == '__main__':
     import pandas
     from openpyxl import load_workbook
-    s = Search('Microblogging',results_limit=500).as_dataframe()
+    s = Search('Virus',results_limit=2000).as_dataframe()
     writer = pandas.ExcelWriter('test4.xlsx', engine='openpyxl')
     writer.book = load_workbook('test4.xlsx')
     writer.sheets = {ws.title: ws for ws in writer.book.worksheets}
