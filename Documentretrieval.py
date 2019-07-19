@@ -209,7 +209,7 @@ patent1
 
 patent1_tfidfVect = TfidfVectorizer()
 patent1_tfidfVect = patent1_tfidfVect.fit(patentlist['abstract'])
-patent1_tfidf = patent1_tfidfVect.transform(patentlist['abstract'])
+patent1_tfidf = patent1_tfidfVect.transform(patent1['abstract'])
 
 
 # In[25]:
