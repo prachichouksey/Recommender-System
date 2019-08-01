@@ -77,6 +77,10 @@
                     </div>
                     <div style="color:Black">
                         <form action={{form_action}} method='POST' >
+                            <select name="searchCriteria"><option value="keyword">Keyword</option>
+                                <option value="userid">UserId</option>
+                                <option value="patentid">PatentId</option>
+                            </select>
                             <input type="text" name="keyword" size="60" />
                             <input type="submit" class="btn btn-primary btn-xl-2 page-scroll"/>
                         </form>

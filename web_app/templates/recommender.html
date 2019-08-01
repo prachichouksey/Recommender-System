@@ -58,7 +58,7 @@
     <header>
         <div class="header-content">
             <div class="header-content-inner">
-                <h1 id="homeHeading">Academic Paper Recommender</h1>
+                <h1 id="homeHeading">Patent Recommender</h1>
                 <hr>
                 <p>Patent Recommender can help you find the most relevant patents for you in seconds!</p>
                 <a href="#search" class="btn btn-primary btn-xl page-scroll">Let's start!</a>
@@ -76,6 +76,11 @@
                     </div>
                     <div style="color:Black">
                         <form action={{form_action}} method='POST' >
+                            <select name="searchCriteria">
+                                <option value="keyword">Keyword</option>
+                                <option value="userid">UserId</option>
+                                <option value="patentid">PatentId</option>
+                            </select>
                             <input type="text" name="keyword" size="60" />
                             <input type="submit" class="btn btn-primary btn-xl-2 page-scroll"/>
                         </form>
@@ -86,23 +91,71 @@
                     <div style="margin-bottom:50px">
                     </div>
             </div>
-
+            {% if patent=="true" %}
+            <div class="col-lg-12 text-left">
+                <p><b>
+                        <font size="4"> The patent you provided:
+                    </b></p>
+            </div>
+            {% endif %}
             <div class="row">
                 <div class="col-lg-12">
                     <style>
-                        table, td, th {
+                        table,
+                        td,
+                        th {
                             border: 1px solid black;
                         }
-                        th, td {
+            
+                        th,
+                        td {
                             text-align: center;
                             padding: 10px;
                         }
                     </style>
+                    {% if patent=="true" %}
+                    <table style="width:100%">
+                        <col width="20">
+                        <col width="300">
+                        <col width="150">
+                        <col width="30">
+                          <tr>
+                            <th><b>
+                                    <font size="4">Patent Number</font>
+                                </b></th>
+                                <th><b>
+                                    <font size="4">Abstract</font>
+                                </b></th>
+                                <th><b>
+                                    <font size="4">Title</font>
+                                </b></th>
+                            <th><b>
+                                    <font size="4">Distance</font>
+                                </b></th>
+                             
+                        </tr>
+                        {% for i in range(df_mypatent.shape[0]) %}
+                        <tr>
+                            <td><a href={{df.iloc[i].url}} target="_blank">
+                                    <FONT COLOR="white" size="4">{{df_mypatent.iloc[i].patent_number}}</font>
+                                </a></td>
+                            <td>
+                                <font size="4">{{df_mypatent.iloc[i].abstract}}</font>
+                            </td>
+                            <td>
+                                <font size="4">{{df_mypatent.iloc[i].title}}</font>
+                            </td>
+                            <td>
+                                <font size="4">{{df_mypatent.iloc[i].distance}}</font>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    {% endif %}
                     <br />
                     <br />
                     <br />
                 </div>
-
             <div class="col-lg-12 text-left">
                 <p><b> <font size="4">Here are the similar patents we found for you:</font></b></p>
             </div>
