@@ -33,6 +33,9 @@ def recommender():
                 result_mypatent=result[:1]
                 result=result[1:]
                 return render_template('recommender.html', msg="", df=result,patent="true",df_mypatent=result_mypatent,form_action="/recommender#search")
+            if(searchCriteria=="userid"):
+                result_readpatent=main.getReadPatents(keyword)
+                return render_template('recommender.html', msg="", df=result,user_patent="true",keyword=keyword,df_mypatent=result_readpatent,form_action="/recommender#search")
             else:
                 return render_template('recommender.html', msg="", df=result,form_action="/recommender#search")
         else:
