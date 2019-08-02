@@ -112,7 +112,7 @@ def patentPatentIdMatch(keyword):
     return result
 
 def get_patentnumbers(id,df):
-    subsetDataFrame = df['PATENT NUMBER'][df['UID'] == id].str.split(",", expand = True) 
+    subsetDataFrame = df['PATENT NUMBER'][df['UID'] == id].str.split(", ", expand = True) 
     return subsetDataFrame
 
 
@@ -121,7 +121,7 @@ def get_similarity_matrix(k):
     for i in range(0, len(numbers)): 
         numbers[i] = int(numbers[i])
     len(numbers)
-    data= pd.read_csv('similarity_matrix.csv')
+    data= pd.read_csv('../data/similarity_matrix.csv')
     data.rename( columns={'Unnamed: 0':'patent_no'}, inplace=True)
     data.set_index('patent_no', inplace=True)
 
@@ -173,7 +173,7 @@ def get_similarity_matrix(k):
     return bigdata
 
 def patentUserIdMatch(id):
-    df= pd.read_excel('UID_keyword_ptnum.xlsx')
+    df= pd.read_excel('../data/UID_keyword_ptnum.xlsx')
     df =df.dropna()
     df
     user_list = df["UID"].tolist() 
@@ -186,7 +186,18 @@ def patentUserIdMatch(id):
     else:
         print("USERID not there")
 
+def getReadPatents(id):
+    df= pd.read_excel('../data/UID_keyword_ptnum.xlsx')
+    df =df.dropna()
+    k = get_patentnumbers(id,df).values.tolist()
+    patentno=k[0]
+    patentlist = pd.read_csv('../data/Dataset.csv')
+    df=pd.DataFrame()
+    for i in range(len(patentno)):
+        patent=patentlist[patentlist['patent_num'] == str(patentno[i])]
+        df = df.append(pd.DataFrame(patent), ignore_index=True)
+    return df[["patent_num","abstract","title","url"]]
     
 if __name__=="__main__":
-    test=patentKeywordMatch("cloud")
+    test=getReadPatents("U02")
     print(test)

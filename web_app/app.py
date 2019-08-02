@@ -32,9 +32,12 @@ def recommender():
             if(searchCriteria=="patentid"):
                 result_mypatent=result[:1]
                 result=result[1:]
-                return render_template('recommender.html', msg="", df=result,patent="true",df_mypatent=result_mypatent,form_action="/recommender#search")
+                return render_template('recommender.html', msg="", df=result,patent="true",user_patent="false",df_mypatent=result_mypatent,form_action="/recommender#search")
+            if(searchCriteria=="userid"):
+                result_readpatent=main.getReadPatents(keyword)
+                return render_template('recommender.html', msg="", df=result,user_patent="true",keyword=keyword,df_mypatent=result_readpatent,form_action="/recommender#search")
             else:
-                return render_template('recommender.html', msg="", df=result,form_action="/recommender#search")
+                return render_template('recommender.html', msg="", df=result,user_patent="false",form_action="/recommender#search")
         else:
             return render_template('index.html',
                                    msg="Unfortunately, this patent is not in our database. Please try another paper.",
