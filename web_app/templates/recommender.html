@@ -137,7 +137,7 @@
                         {% for i in range(df_mypatent.shape[0]) %}
                         <tr>
                             <td><a href={{df.iloc[i].url}} target="_blank">
-                                    <FONT COLOR="white" size="4">{{df_mypatent.iloc[i].patent_number}}</font>
+                                    <FONT COLOR="white" size="4">{{df_mypatent.iloc[i].patent_num}}</font>
                                 </a></td>
                             <td>
                                 <font size="4">{{df_mypatent.iloc[i].abstract}}</font>
@@ -185,7 +185,7 @@
                         </tr>
                         {% for i in range(df.shape[0]) %}
                         <tr>
-                            <td><a href={{df.iloc[i].url}} target="_blank"><FONT COLOR="white" size="4">{{df.iloc[i].patent_number}}</font></a></td>
+                            <td><a href={{df.iloc[i].url}} target="_blank"><FONT COLOR="white" size="4">{{df.iloc[i].patent_num}}</font></a></td>
                             <td><font size="4">{{df.iloc[i].abstract}}</font></td>
                             <td><font size="4">{{df.iloc[i].title}}</font></td>
                             <td><font size="4">{{df.iloc[i].distance}}</font></td>
