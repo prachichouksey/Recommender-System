@@ -6,6 +6,7 @@ Created on Tue Jul  23 17:02:27 2019
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 import numpy as np
+import pickle
 from sklearn.neighbors import NearestNeighbors
 patentlist = pd.read_csv('../data/Dataset.csv')
 
@@ -17,10 +18,7 @@ cachedStopWords = set(stopwords.words("english"))
 ps = PorterStemmer()
 
 from collections import Counter
-
-def patentKeywordMatch(keyword):
-    keyword_mod=[]
-    keyword_mod.append(keyword)
+def generateTFIDFMatrix():
     patentlist['abstract_org']=patentlist['abstract']
     abstract=[]
     for item in patentlist['abstract_org']:
@@ -41,19 +39,29 @@ def patentKeywordMatch(keyword):
     patentlist['word_count'] = freq_count
     tfidfVect = TfidfVectorizer()
     tfidf = tfidfVect.fit_transform(patentlist['abstract_org'])
-    print(tfidf)
-    print(tfidfVect.vocabulary_.get('radio'))
-    patent1 =keyword_mod
+    pickle.dump(tfidf, open("tfidf_fit_transform.pickle", "wb"))
+    
+def generateFitVector():
     patent1_tfidfVect = TfidfVectorizer()
     patent1_tfidfVect = patent1_tfidfVect.fit(patentlist['abstract_org'])
+    pickle.dump(patent1_tfidfVect, open("tfidf_fit.pickle", "wb"))
+    
+def patentKeywordMatch(keyword):
+    search=[]
+    text=[]
+    strtext=[]
+    for word in keyword.lower().split():
+            word=word.replace(",", "").replace(".", "").replace("(", "").replace(")", "")
+            if word not in cachedStopWords:
+                word = ps.stem(word)
+                text.append(word)
+            strtext=' '.join(text)
+            search.append(strtext)
+    patent1 =search
+    patent1_tfidfVect = pickle.load(open("tfidf_fit.pickle", "rb"))
     patent1_tfidf = patent1_tfidfVect.transform(patent1)
-    patent1_tfidfVect.vocabulary_
-#    patent1_tfidf_table = pd.DataFrame(sorted(patent1_tfidfVect.vocabulary_.items(),key=lambda pair: pair[1],reverse=True))
-#    patent1_tfidf_table
-#    feature_names = patent1_tfidfVect.get_feature_names()
-#    for col in patent1_tfidf.nonzero()[1]:
-#        print(feature_names[col], ' - ', patent1_tfidf[0, col])
-    nbrs = NearestNeighbors(n_neighbors=6).fit(tfidf)
+    new_tfidf=pickle.load(open("tfidf_fit_transform.pickle", "rb"))
+    nbrs = NearestNeighbors(n_neighbors=5).fit(new_tfidf)
     distances, indices = nbrs.kneighbors(patent1_tfidf)
     names_similar = pd.Series(indices.flatten()).map(patentlist.reset_index()['patent_num'])
     abstract_similar = pd.Series(indices.flatten()).map(patentlist.reset_index()['abstract'])
@@ -66,9 +74,11 @@ def patentKeywordMatch(keyword):
     return result
 
 def patentPatentIdMatch(keyword):
-    patentlist['abstract_org']=patentlist['abstract']
+    patent1 = patentlist[patentlist['patent_num'] == keyword]
+    patent2=patent1['abstract']
+    print(patent2)
     abstract=[]
-    for item in patentlist['abstract_org']:
+    for item in patent2:
         text=[]
         strtext=''
         for word in item.lower().split():
@@ -78,19 +88,10 @@ def patentPatentIdMatch(keyword):
                 text.append(word)
             strtext=' '.join(text)
         abstract.append(strtext)
-    patentlist['abstract_org']=abstract
-    freq_count = []
-    for item in patentlist['abstract_org']:
-        count = Counter(str(item).split())
-        freq_count.append(count)
-    patentlist['word_count'] = freq_count
-    tfidfVect = TfidfVectorizer()
-    tfidf = tfidfVect.fit_transform(patentlist['abstract_org'])
-    print(tfidfVect.vocabulary_.get('radio'))
+    tfidf = pickle.load(open("tfidf_fit_transform.pickle", "rb"))
     patent1 = patentlist[patentlist['patent_num'] == keyword]
-    patent1=patent1["abstract_org"]
-    patent1_tfidfVect = TfidfVectorizer()
-    patent1_tfidfVect = patent1_tfidfVect.fit(patentlist['abstract_org'])
+    patent1=abstract
+    patent1_tfidfVect = pickle.load(open("tfidf_fit.pickle", "rb"))
     patent1_tfidf = patent1_tfidfVect.transform(patent1)
     patent1_tfidfVect.vocabulary_
     patent1_tfidf_table = pd.DataFrame(sorted(patent1_tfidfVect.vocabulary_.items(),key=lambda pair: pair[1],reverse=True))
@@ -112,7 +113,7 @@ def patentPatentIdMatch(keyword):
     return result
 
 def get_patentnumbers(id,df):
-    subsetDataFrame = df['PATENT NUMBER'][df['UID'] == id].str.split(",", expand = True) 
+    subsetDataFrame = df['PATENT NUMBER'][df['UID'] == id].str.split(", ", expand = True) 
     return subsetDataFrame
 
 
@@ -121,7 +122,7 @@ def get_similarity_matrix(k):
     for i in range(0, len(numbers)): 
         numbers[i] = int(numbers[i])
     len(numbers)
-    data= pd.read_csv('similarity_matrix.csv')
+    data= pd.read_csv('../data/similarity_matrix.csv')
     data.rename( columns={'Unnamed: 0':'patent_no'}, inplace=True)
     data.set_index('patent_no', inplace=True)
 
@@ -173,7 +174,7 @@ def get_similarity_matrix(k):
     return bigdata
 
 def patentUserIdMatch(id):
-    df= pd.read_excel('UID_keyword_ptnum.xlsx')
+    df= pd.read_excel('../data/UID_keyword_ptnum.xlsx')
     df =df.dropna()
     df
     user_list = df["UID"].tolist() 
@@ -186,7 +187,20 @@ def patentUserIdMatch(id):
     else:
         print("USERID not there")
 
+def getReadPatents(id):
+    df= pd.read_excel('../data/UID_keyword_ptnum.xlsx')
+    df =df.dropna()
+    k = get_patentnumbers(id,df).values.tolist()
+    patentno=k[0]
+    patentlist = pd.read_csv('../data/Dataset.csv')
+    df=pd.DataFrame()
+    for i in range(len(patentno)):
+        patent=patentlist[patentlist['patent_num'] == str(patentno[i])]
+        df = df.append(pd.DataFrame(patent), ignore_index=True)
+    return df[["patent_num","abstract","title","url"]]
     
 if __name__=="__main__":
-    test=patentKeywordMatch("cloud")
+#    test=generateTFIDFMatrix()
+#    test1=generateFitVector()
+    test=patentPatentIdMatch("10349422")
     print(test)
