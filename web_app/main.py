@@ -199,8 +199,3 @@ def getReadPatents(id):
         df = df.append(pd.DataFrame(patent), ignore_index=True)
     return df[["patent_num","abstract","title","url"]]
     
-if __name__=="__main__":
-#    test=generateTFIDFMatrix()
-#    test1=generateFitVector()
-    test=patentPatentIdMatch("10349422")
-    print(test)
