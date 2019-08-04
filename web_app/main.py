@@ -175,7 +175,7 @@ def get_similarity_matrix(k):
     return bigdata
 
 def patentUserIdMatch(id):
-    df= pd.read_excel('../data/Item_based_patents.xlsx')
+    df= pd.read_excel('../data/Item_based_patents.csv')
     df =df.dropna()
     df
     user_list = df["UID"].tolist() 
@@ -189,7 +189,7 @@ def patentUserIdMatch(id):
         print("USERID not there")
 
 def getReadPatents(id):
-    df= pd.read_excel('../data/Item_based_patents.xlsx')
+    df= pd.read_excel('../data/Item_based_patents.csv')
     df =df.dropna()
     k = get_patentnumbers(id,df).values.tolist()
     patentno=k[0]
