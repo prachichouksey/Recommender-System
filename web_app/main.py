@@ -40,12 +40,12 @@ def generateTFIDFMatrix():
     patentlist['word_count'] = freq_count
     tfidfVect = TfidfVectorizer()
     tfidf = tfidfVect.fit_transform(patentlist['abstract_org'])
-    pickle.dump(tfidf, open("tfidf_fit_transform.pickle", "wb"))
+    pickle.dump(tfidf, open("tfidf_fit_transform.pickle", "wb"),protocol=2)
     
 def generateFitVector():
     patent1_tfidfVect = TfidfVectorizer()
     patent1_tfidfVect = patent1_tfidfVect.fit(patentlist['abstract_org'])
-    pickle.dump(patent1_tfidfVect, open("tfidf_fit.pickle", "wb"))
+    pickle.dump(patent1_tfidfVect, open("tfidf_fit.pickle", "wb"),protocol=2)
     
 def patentKeywordMatch(keyword):
     search=[]
@@ -224,6 +224,5 @@ def createTfIdfSimMatrix():
      print(cosine)
     
 if __name__=="__main__":
-    test=getReadPatents("U03")
-    print(test)
-#    createTfIdfSimMatrix()
+    generateTFIDFMatrix()
+    generateFitVector()
