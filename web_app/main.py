@@ -5,7 +5,8 @@ Created on Tue Jul  23 17:02:27 2019
 """
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
-import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity 
+from sklearn.metrics.pairwise import linear_kernel
 import pickle
 from sklearn.neighbors import NearestNeighbors
 patentlist = pd.read_csv('../data/Dataset.csv')
@@ -121,8 +122,8 @@ def get_similarity_matrix(k):
     numbers = k[0]
     for i in range(0, len(numbers)): 
         numbers[i] = int(numbers[i])
-    len(numbers)
-    data= pd.read_csv('../data/similarity_matrix.csv')
+    print(numbers)
+    data= pd.read_csv('../data/tf_idf.csv')
     data.rename( columns={'Unnamed: 0':'patent_no'}, inplace=True)
     data.set_index('patent_no', inplace=True)
 
@@ -131,14 +132,13 @@ def get_similarity_matrix(k):
 
     pp= data.loc[numbers]
     pp= pp.dropna()
-    pp        
 
     demo=[]
     comb=[]
-    for i in range(0,len(numbers)-1):
-        for j in range(0,len(results)):
+    for i in range(0,len(pp)-1):
+        for j in range(0,len(results)-1):
             comb=[]
-            if pp.iloc[i][j]!=0.0:
+            if pp.iloc[i][j]!=0 and pp.iloc[i][j]!=1 :
                 comb.append(pp.iloc[i][j])
                 comb.append(results[j])
                 demo.append(comb)
@@ -156,7 +156,8 @@ def get_similarity_matrix(k):
             arr1.append(arr[i])
     arr1=arr1[:6]
     
-    patentlist = pd.read_csv('../data/Dataset.csv')
+    
+    patentlist = pd.read_csv('../data/Dataset1.csv')
     patent1 = patentlist[patentlist['patent_num'] == str(arr1[0][1])]
     patent1['distance']=arr1[0][0]
     patent2 = patentlist[patentlist['patent_num'] == str(arr1[1][1])]
@@ -174,7 +175,7 @@ def get_similarity_matrix(k):
     return bigdata
 
 def patentUserIdMatch(id):
-    df= pd.read_excel('../data/UID_keyword_ptnum.xlsx')
+    df= pd.read_excel('../data/Item_based_patents.xlsx')
     df =df.dropna()
     df
     user_list = df["UID"].tolist() 
@@ -188,14 +189,41 @@ def patentUserIdMatch(id):
         print("USERID not there")
 
 def getReadPatents(id):
-    df= pd.read_excel('../data/UID_keyword_ptnum.xlsx')
+    df= pd.read_excel('../data/Item_based_patents.xlsx')
     df =df.dropna()
     k = get_patentnumbers(id,df).values.tolist()
     patentno=k[0]
-    patentlist = pd.read_csv('../data/Dataset.csv')
+    print(patentno)
+    patentlist = pd.read_csv('../data/Dataset1.csv')
     df=pd.DataFrame()
     for i in range(len(patentno)):
         patent=patentlist[patentlist['patent_num'] == str(patentno[i])]
         df = df.append(pd.DataFrame(patent), ignore_index=True)
     return df[["patent_num","abstract","title","url"]]
+
+def createTfIdfSimMatrix():
+     patentlist = pd.read_csv('../data/Dataset1.csv')
+     patentlist['abstract_org']=patentlist['abstract']
+     abstract=[]
+     for item in patentlist['abstract_org']:
+         text=[]
+         strtext=''
+         for word in item.lower().split():
+             word=word.replace(",", "").replace(".", "").replace("(", "").replace(")", "")
+             if word not in cachedStopWords:
+                 word = ps.stem(word)
+                 text.append(word)
+             strtext=' '.join(text)
+         abstract.append(strtext)
+     patentlist['abstract_org']=abstract
+     tf_idf = TfidfVectorizer().fit_transform(patentlist['abstract_org'])
+     print(tf_idf.shape[1])
+     cosine = linear_kernel(tf_idf, tf_idf)
+     df=pd.DataFrame(cosine,columns=patentlist["patent_num"], index=patentlist["patent_num"])
+     df.to_csv("../data/tf_idf.csv")
+     print(cosine)
     
+if __name__=="__main__":
+    test=getReadPatents("U03")
+    print(test)
+#    createTfIdfSimMatrix()
