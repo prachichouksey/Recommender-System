@@ -1,12 +1,12 @@
 # Patent Recommendation System
 
 ## Team member
-Prachi Chouksey,
-Pavani Somarouthu,
-Ruchika Hazariwal and
-Rachana Bumb
+* Prachi Chouksey
+* Pavani Somarouthu
+* Ruchika Hazariwal
+* Rachana Bumb
 
-##Youtube link
+## Youtube link
 
 
 ## Overview
@@ -49,4 +49,4 @@ Link from where dataset is being web scraped: https://www.uspto.gov/
 ```
 
 ## Deployment
-The algorithms runs in batch mode, meaning that recommendations for each patent is calculated for every input. This flask application has been deployed on AWS EC2 instance,
+The algorithms runs in batch mode, meaning that recommendations for each patent is calculated for every input. This flask application has been deployed on AWS EC2 instance
