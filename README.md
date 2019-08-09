@@ -18,15 +18,15 @@ To analyze, manipulate, clean and evaluate our results on large amount of datase
 Link from where dataset is being web scraped: https://www.uspto.gov/
 
 ## Data Preprocessing
-Redundancy- We make sure redundant data is not present in our dataset while web scraping unique patents from the website.
-Missing Values- Few documents have missing abstracts, we fill in title in the abstract attribute to make sure data is complete.
-Attribute Selection- We have selected the following columns after preprocessing of data.
-Stemming- Generating variants of root/base words.
+* Redundancy- We make sure redundant data is not present in our dataset while web scraping unique patents from the website.
+* Missing Values- Few documents have missing abstracts, we fill in title in the abstract attribute to make sure data is complete.
+* Attribute Selection- We have selected the following columns after preprocessing of data.
+* Stemming- Generating variants of root/base words.
 
 ## Approaches
-#### User based Collaborative approach: Exploratory Data Analysis: This part of the module answers questions like: What is the distribution of how many patents a user interacts with in the dataset? Provides a visual and descriptive statistics to assist with giving a look at the number of times each user interacts with a patent
-#### Content based recommendation system: Patent classification is a problem in today’s, information and computer science. As a consequence of exponential growth, great importance has been put on the classification of patents into categories that describe the content of the abstract and body of patents. The function of classifier is to merge patent information into one or more predefined categories based on their content. Each patent can belong to several categories or may be its own category. Very rapid growth in the amount of text data leads to expansion of different automatic methods targeted to improve the speed and efficiency of automated patent classification and recommendation with textual content.
-#### Hybrid Approach: Content plus item based Collaborative recommendation system: Vector-based / Cosine-based Similarity: In this algorithm, patents are represented as two vectors that contain the user IDE and Patent ID. The similarity between user ID and Patent ID is calculated by the cosine of the angle between the two vectors. Database of approximately 20 users was created and stored as CSV file. Matrix of vectors is generated with rows and columns as User ID and Patent ID to know which user has read which patent of particular patent ID. Number represented in a row is matched to the Patent ID.
+* User based Collaborative approach: This part of the module answers questions like: What is the distribution of how many patents a user interacts with in the dataset? Provides a visual and descriptive statistics to assist with giving a look at the number of times each user interacts with a patent
+* Content based recommendation system: Patent classification is a problem in today’s, information and computer science. As a consequence of exponential growth, great importance has been put on the classification of patents into categories that describe the content of the abstract and body of patents. The function of classifier is to merge patent information into one or more predefined categories based on their content. Each patent can belong to several categories or may be its own category. Very rapid growth in the amount of text data leads to expansion of different automatic methods targeted to improve the speed and efficiency of automated patent classification and recommendation with textual content.
+* Hybrid Approach: Content plus item based Collaborative recommendation system: Vector-based / Cosine-based Similarity: In this algorithm, patents are represented as two vectors that contain the user IDE and Patent ID. The similarity between user ID and Patent ID is calculated by the cosine of the angle between the two vectors. Database of approximately 20 users was created and stored as CSV file. Matrix of vectors is generated with rows and columns as User ID and Patent ID to know which user has read which patent of particular patent ID. Number represented in a row is matched to the Patent ID.
 
 ## Repo Structure
 ```
