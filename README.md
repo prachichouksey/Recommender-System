@@ -1,9 +1,9 @@
 # Patent Recommendation System
 
 ## Team member
+* Ruchika Hazariwal
 * Prachi Chouksey
 * Pavani Somarouthu
-* Ruchika Hazariwal
 * Rachana Bumb
 
 ## Youtube link for demo
